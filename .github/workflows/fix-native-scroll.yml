@@ -1,0 +1,160 @@
+name: Fix section navigation scroll
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-native-scroll.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Replace broken custom scroll with native scroll
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+
+          old = '''  if(!RM&&!MOB){
+    document.documentElement.style.overflow='hidden';
+    document.body.style.position='fixed';
+    document.body.style.width='100%';
+    document.body.style.height='100%';
+
+    function easeOutQuint(t){return 1-Math.pow(1-t,5)}
+
+    (function loop(){
+      var maxScroll=Math.max(document.body.scrollHeight,document.documentElement.scrollHeight)-window.innerHeight;
+      scrollTarget=Math.max(0,Math.min(scrollTarget,maxScroll));
+      scrollY+=(scrollTarget-scrollY)*0.08;
+      if(Math.abs(scrollTarget-scrollY)<0.5){scrollY=scrollTarget;isScrolling=false}
+      document.body.style.transform='translate3d(0,'+(-scrollY)+'px,0)';
+      requestAnimationFrame(loop);
+    })();
+
+    function smoothScrollTo(targetY){
+      var startY=scrollY;
+      var dist=Math.abs(targetY-startY);
+      var dur=Math.max(500,Math.min(1200,dist*0.4));
+      var startTime=performance.now();
+
+      // MOD #1: activate scroll veil
+      scrollVeil.classList.add('active');
+      setTimeout(function(){scrollVeil.classList.remove('active')},dur*0.4);
+
+      isScrolling=true;
+      function step(now){
+        var p=Math.min((now-startTime)/dur,1);
+        var eased=easeOutQuint(p);
+        scrollTarget=startY+(targetY-startY)*eased;
+        if(p<1&&isScrolling)requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+  } else {
+    scrollY=window.pageYOffset;
+    scrollTarget=scrollY;
+    window.addEventListener('scroll',function(){scrollTarget=window.pageYOffset;scrollY=scrollTarget},{passive:true});
+  }'''
+
+          new = '''  if(!RM&&!MOB){
+    // Use the browser's native document scroll. The previous implementation
+    // fixed and transformed <body>, which collapsed the document's scrollable
+    // height and made section navigation land on a blank page.
+    function easeOutQuint(t){return 1-Math.pow(1-t,5)}
+
+    scrollY=window.pageYOffset;
+    scrollTarget=scrollY;
+
+    window.addEventListener('scroll',function(){
+      scrollY=window.pageYOffset;
+      scrollTarget=scrollY;
+    },{passive:true});
+
+    function smoothScrollTo(targetY){
+      var startY=window.pageYOffset;
+      var dist=Math.abs(targetY-startY);
+      var dur=Math.max(500,Math.min(1200,dist*0.4));
+      var startTime=performance.now();
+
+      scrollVeil.classList.add('active');
+      setTimeout(function(){scrollVeil.classList.remove('active')},dur*0.4);
+
+      isScrolling=true;
+      function step(now){
+        var p=Math.min((now-startTime)/dur,1);
+        var eased=easeOutQuint(p);
+        var y=startY+(targetY-startY)*eased;
+        window.scrollTo(0,y);
+        scrollY=y;
+        scrollTarget=y;
+        if(p<1){
+          requestAnimationFrame(step);
+        }else{
+          window.scrollTo(0,targetY);
+          scrollY=targetY;
+          scrollTarget=targetY;
+          isScrolling=false;
+        }
+      }
+      requestAnimationFrame(step);
+    }
+
+  } else {
+    scrollY=window.pageYOffset;
+    scrollTarget=scrollY;
+    window.addEventListener('scroll',function(){scrollTarget=window.pageYOffset;scrollY=scrollTarget},{passive:true});
+  }'''
+
+          if old not in text:
+              raise SystemExit('Expected custom-scroll block was not found')
+          text=text.replace(old,new,1)
+
+          old_nav = '''      var targetY=(id==='#hero')?0:t.offsetTop;
+
+      playSectionTransition(id,function(){
+        if(!RM&&!MOB){
+          scrollY=targetY;scrollTarget=targetY;
+          document.body.style.transform='translate3d(0,'+(-scrollY)+'px,0)';
+        }else{
+          window.scrollTo(0,targetY);
+          scrollY=targetY;scrollTarget=targetY;
+        }
+      });'''
+
+          new_nav = '''      var targetY=(id==='#hero')?0:(t.getBoundingClientRect().top+window.pageYOffset);
+
+      playSectionTransition(id,function(){
+        if(!RM&&!MOB){
+          smoothScrollTo(targetY);
+        }else{
+          window.scrollTo(0,targetY);
+          scrollY=targetY;scrollTarget=targetY;
+        }
+      });'''
+
+          if old_nav not in text:
+              raise SystemExit('Expected navigation block was not found')
+          text=text.replace(old_nav,new_nav,1)
+
+          path.write_text(text,encoding='utf-8')
+          PY
+
+      - name: Commit and remove temporary workflow
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html .github/workflows/fix-native-scroll.yml
+          git rm .github/workflows/fix-native-scroll.yml
+          git commit -m 'Fix section navigation blank page'
+          git push
