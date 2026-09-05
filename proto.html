@@ -886,7 +886,7 @@ footer .foot-num{font-family:var(--font-display);letter-spacing:.06em}
     function easeOutQuint(t){return 1-Math.pow(1-t,5)}
 
     (function loop(){
-      var maxScroll=document.documentElement.scrollHeight-window.innerHeight;
+      var maxScroll=Math.max(document.body.scrollHeight,document.documentElement.scrollHeight)-window.innerHeight;
       scrollTarget=Math.max(0,Math.min(scrollTarget,maxScroll));
       scrollY+=(scrollTarget-scrollY)*0.08;
       if(Math.abs(scrollTarget-scrollY)<0.5){scrollY=scrollTarget;isScrolling=false}
@@ -991,7 +991,7 @@ footer .foot-num{font-family:var(--font-display);letter-spacing:.06em}
   var bodyBefore=document.querySelector('body');
 
   function updateProgress(){
-    var max=document.documentElement.scrollHeight-window.innerHeight;
+    var max=Math.max(document.body.scrollHeight,document.documentElement.scrollHeight)-window.innerHeight;
     var pct=max>0?(scrollY/max)*100:0;
     progEl.style.width=pct+'%';
     // MOD #13: update gradient position
