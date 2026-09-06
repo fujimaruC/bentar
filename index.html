@@ -805,16 +805,6 @@ footer .foot-num{font-family:var(--font-display);letter-spacing:.06em}
   const RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const MOB=window.matchMedia('(max-width:768px)').matches;
 
-  /* Move fixed-position overlays out of <body> so they aren't trapped
-     inside the transformed body (position:fixed + transform creates a new
-     containing block, breaking viewport-relative positioning). */
-  ['section-transition','scroll-veil','scroll-progress',
-   'cursor-dot','cursor-ring','cursor-label','copy-toast','connect-svg'
-  ].forEach(function(id){
-    var el=document.getElementById(id);
-    if(el)document.documentElement.appendChild(el);
-  });
-
   /* ── PRELOADER ── */
   (function(){
     if(RM){document.getElementById('preloader').style.display='none';return}
@@ -958,7 +948,7 @@ footer .foot-num{font-family:var(--font-display);letter-spacing:.06em}
   var bodyBefore=document.querySelector('body');
 
   function updateProgress(){
-    var max=(!RM&&!MOB?docHeight:document.documentElement.scrollHeight)-window.innerHeight;
+    var max=Math.max(document.body.scrollHeight,document.documentElement.scrollHeight)-window.innerHeight;
     var pct=max>0?(scrollY/max)*100:0;
     progEl.style.width=pct+'%';
     // MOD #13: update gradient position
