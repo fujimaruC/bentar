@@ -1,0 +1,138 @@
+/* ═══════════════════════════════════════════════════════
+   BASE STYLES — Reset, globals, scrollbar, selection
+   ═══════════════════════════════════════════════════════ */
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box }
+
+html {
+  font-size: 16px;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Scroll-linked background gradient */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-base);
+  background: radial-gradient(ellipse at var(--gx, 50%) var(--gy, 0%), rgba(255, 107, 26, 0.06), transparent 55%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+/* Noise overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-noise);
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px }
+::-webkit-scrollbar-track { background: var(--bg) }
+::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: var(--radius-sm) }
+
+a { color: inherit; text-decoration: none }
+img { display: block; max-width: 100% }
+button { background: none; border: none; color: inherit; font: inherit; cursor: pointer }
+::selection { background: var(--accent); color: var(--bg) }
+
+section { position: relative }
+.wrap { padding: clamp(4rem, 9vh, 7rem) var(--gutter) }
+
+/* ═══════════ KEYFRAMES ═══════════ */
+@keyframes textReveal { from { transform: translateY(110%) } to { transform: translateY(0) } }
+@keyframes revealUp { from { opacity: 0; transform: translateY(20px) } to { opacity: 1; transform: translateY(0) } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px) } to { opacity: 1; transform: translateY(0) } }
+@keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1) } 50% { opacity: 0; transform: scale(2) } }
+@keyframes signalPulse { 0% { left: -30% } 100% { left: 100% } }
+@keyframes rippleExpand { 0% { width: 0; height: 0; opacity: 0.7 } 100% { width: 140px; height: 140px; opacity: 0 } }
+@keyframes microGlitch {
+  0% { text-shadow: 2px 0 #00f, -2px 0 #f00; transform: translateX(0) }
+  20% { text-shadow: -2px 0 #00f, 2px 0 #f00; transform: translateX(2px) }
+  40% { text-shadow: 1px 0 #00f, -1px 0 #f00; transform: translateX(-1px) }
+  60% { text-shadow: -1px 0 #00f, 1px 0 #f00; transform: translateX(1px) }
+  80% { text-shadow: 0 2px 0 #00f, 0 -2px 0 #f00; transform: translateX(-1px) }
+  100% { text-shadow: none; transform: translateX(0) }
+}
+@keyframes loadLine { 0% { left: -100% } 100% { left: 0 } }
+@keyframes scrollLineMove { 0% { top: -50% } 100% { top: 150% } }
+@keyframes navIn { from { opacity: 0; transform: translateY(-14px) } to { opacity: 1; transform: translateY(0) } }
+@keyframes ringPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5 }
+  50% { transform: translate(-50%, -50%) scale(1.08); opacity: 0.8 }
+}
+@keyframes ringSpin { to { transform: rotate(360deg) } }
+@keyframes workSlideIn {
+  from { clip-path: inset(0 0 100% 0); transform: translateX(-20px); opacity: 0 }
+  to { clip-path: inset(0 0 0% 0); transform: translateX(0); opacity: 1 }
+}
+
+/* ═══════════ REDUCED MOTION ═══════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .hero-name .line > span,
+  .section-title .ri,
+  .quote-text .wi { transform: translateY(0) !important }
+  .hero-kicker, .hero-role, .hero-meta, .hero-copy, .scroll-hint { opacity: 1 !important; animation: none !important }
+  .work-row { animation: none !important; opacity: 1 !important; clip-path: none !important }
+  .cursor-dot, .cursor-ring, .cursor-label { display: none !important }
+  #topology { display: none !important }
+  .contact-ring { animation: none !important }
+  .signal-line::after { animation: none !important }
+  .click-ripple { display: none !important }
+  .glitch-active { animation: none !important; text-shadow: none !important }
+  body::before { display: none !important }
+  .section-transition { display: none }
+}
+
+/* ═══════════ RESPONSIVE ═══════════ */
+@media (max-width: 1024px) {
+  .about { grid-template-columns: 1fr; gap: 3rem }
+  .stats-strip { grid-template-columns: repeat(2, 1fr) }
+  .stat:nth-child(2) { border-right: none }
+  .stat:nth-child(3), .stat:nth-child(4) { border-top: 1px solid var(--line) }
+  .stat:nth-child(3) { border-right: 1px solid var(--line) }
+  .cap-body { grid-template-columns: 1fr }
+}
+
+@media (max-width: 768px) {
+  nav .links { display: none }
+  nav .status { display: none }
+  .hero-inner { padding-top: 6rem }
+  .work-row { flex-wrap: wrap }
+  .work-row .w-cat { width: 100%; text-align: left }
+  .work-row .w-tags { justify-content: flex-start; flex: 1 0 100%; flex-direction: row; flex-wrap: wrap }
+  .work-row .w-arrow { display: none }
+  .cursor-dot, .cursor-ring, .cursor-label { display: none }
+  footer { flex-direction: column; text-align: center }
+  .about-focus { grid-template-columns: 1fr }
+}
+
+@media (max-width: 480px) {
+  .stats-strip { grid-template-columns: 1fr }
+  .stat { border-right: none; border-bottom: 1px solid var(--line) }
+  .stat:last-child { border-bottom: none }
+}
