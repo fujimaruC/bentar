@@ -1,0 +1,113 @@
+/* ═══════════════════════════════════════════════════════
+   DESIGN TOKENS — Bentar v2
+   Extracted from existing :root + extended for future phases.
+   All visual decisions reference these variables.
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+  /* ── COLOR PALETTE ── */
+  --bg: #0b0c0e;
+  --bg-elev: #121417;
+  --fg: #e8e6e1;
+  --fg-muted: #8a8d93;
+  --fg-dim: #55585f;
+  --accent: #ff6b1a;
+  --accent-soft: #ff7f3a;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.14);
+
+  /* ── EXTENDED COLORS (for future phases) ── */
+  --green: #34d399;
+  --red: #f87171;
+  --blue: #60a5fa;
+  --yellow: #fbbf24;
+
+  /* ── HUD COLORS ── */
+  --hud-bg: rgba(11, 12, 14, 0.85);
+  --hud-border: rgba(255, 107, 26, 0.2);
+  --hud-text: var(--fg-muted);
+  --hud-accent: var(--accent);
+
+  /* ── PARTICLE COLORS ── */
+  --particle-primary: #ff7f3a;
+  --particle-secondary: #ffb27a;
+  --particle-line: rgba(232, 230, 225, 0.05);
+  --particle-glow: rgba(255, 107, 26, 0.035);
+
+  /* ── SECTION ACCENT VARIANTS ── */
+  --accent-hero: var(--accent);
+  --accent-about: var(--accent);
+  --accent-work: var(--accent);
+  --accent-capabilities: var(--accent);
+  --accent-contact: var(--accent);
+
+  /* ── TYPOGRAPHY ── */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* ── TYPE SCALE ── */
+  --text-xs: 0.62rem;
+  --text-sm: 0.72rem;
+  --text-base: 0.85rem;
+  --text-md: 0.95rem;
+  --text-lg: 1.05rem;
+  --text-xl: 1.35rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+  --text-4xl: 2.8rem;
+  --text-5xl: clamp(2.4rem, 7vw, 5.5rem);
+
+  /* ── SPACING SCALE (4px base) ── */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.25rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-10: 2.5rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+  --sp-20: 5rem;
+  --sp-24: 6rem;
+
+  /* ── BORDER RADIUS ── */
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 100px;
+
+  /* ── SHADOWS ── */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.28);
+  --shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.35);
+  --shadow-accent: 0 12px 44px rgba(255, 107, 26, 0.3);
+
+  /* ── EASING CURVES ── */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-magnetic: var(--ease);
+
+  /* ── Z-INDEX SCALE ── */
+  --z-base: 1;
+  --z-content: 2;
+  --z-sticky: 10;
+  --z-nav: 100;
+  --z-progress: 100;
+  --z-cursor: 10000;
+  --z-connect: 50;
+  --z-transition: 9998;
+  --z-veil: 9999;
+  --z-preloader: 10001;
+  --z-noise: 9000;
+  --z-toast: 200;
+
+  /* ── LAYOUT ── */
+  --gutter: 3vw;
+  --max-content: 900px;
+  --nav-height: 1.4rem;
+  --nav-height-scrolled: 0.85rem;
+}
